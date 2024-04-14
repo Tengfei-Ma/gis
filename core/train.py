@@ -225,7 +225,6 @@ def trainShp(shpPath, tifFiles, tasks, modelIndex, modelArgs, valRatio, trainTim
             data = np.array(train_score_list, dtype=str)
             np.savetxt(train_CSV_filename, data, delimiter=",", fmt='%s')
     except Exception as e:
-        print(e)
-        return 0
+        return [0, e]
     else:
-        return 1
+        return [1, "训练完成，模型已保存至指定目录！"]

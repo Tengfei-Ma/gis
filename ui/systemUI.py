@@ -6,6 +6,7 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QListWidgetItem, QCheckBox
 from core.train import getFieldsFromShp
 from core.train import trainShp
+from core.predict import predictTif
 
 
 class Ui_mainWindow(QMainWindow):
@@ -260,6 +261,38 @@ class Ui_mainWindow(QMainWindow):
         self.pushButton_10.clicked.connect(self.button10clicked)
         self.pushButton_11.clicked.connect(self.button11clicked)
         self.pushButton_7.clicked.connect(self.button7clicked)
+        self.pushButton_12.clicked.connect(self.button12clicked)
+
+    def button12clicked(self):
+        if self.listWidget_2.count() < 2:
+            QMessageBox.warning(None, "警告", "请继续添加tif数据源！")
+            return
+        if self.listWidget_5.count() == 0:
+            QMessageBox.warning(None, "警告", "请选择模型文件导入！")
+            return
+        if self.label_9.text() == "":
+            QMessageBox.warning(None, "警告", "请指定掩码tif文件！")
+            return
+        if self.label_11.text() == "":
+            QMessageBox.warning(None, "警告", "请选择目标tif保存目录！")
+            return
+        tifFiles = []
+        for i in range(self.listWidget_2.count()):
+            tifFiles.append(self.listWidget_2.item(i).text())
+        modelFiles = []
+        for i in range(self.listWidget_5.count()):
+            modelFiles.append(self.listWidget_5.item(i).text())
+        maskTifFile = self.label_9.text()
+        targetTifDir = self.label_11.text()
+        res = predictTif(tifFiles, modelFiles, maskTifFile, targetTifDir, self.progressBar)
+        if res[0] == 1:
+            self.progressBar.setValue(100)
+            self.statusbar.showMessage("预测出图完毕！", 10000)
+            QMessageBox.information(None, "消息提示", res[1])
+            self.button9clicked()
+        else:
+            QMessageBox.critical(None, "运行错误", "预测过程异常，异常信息：" + res[1])
+        self.progressBar.setVisible(False)
 
     def button7clicked(self):
         if self.listWidget_1.count() == 0:
@@ -305,15 +338,17 @@ class Ui_mainWindow(QMainWindow):
         k = self.spinBox_8.value()
         modelDir = self.label_7.text()
         self.progressBar.setVisible(True)
-        res = trainShp(shpPath, tifFiles, tasks, modelIndex, modelArgs, valRatio, trainTimes, k, modelDir,self.progressBar)
-        if res == 1:
+        res = trainShp(shpPath, tifFiles, tasks, modelIndex, modelArgs, valRatio, trainTimes, k, modelDir,
+                       self.progressBar)
+        if res[0] == 1:
             self.progressBar.setValue(100)
             self.statusbar.showMessage("训练完毕！", 10000)
-            QMessageBox.information(None, "消息提示", "训练完成，模型保存至指定目录！")
-            self.progressBar.setVisible(False)
+            QMessageBox.information(None, "消息提示", res[1])
+            self.listWidget_4.clear()
         else:
-            QMessageBox.critical(None, "运行错误", "训练过程异常，请确认相关参数重新训练！")
-            self.progressBar.setVisible(False)
+            QMessageBox.critical(None, "运行错误", "训练过程异常，异常信息：" + res[1])
+        self.progressBar.setVisible(False)
+
     def button11clicked(self):
         fd = QFileDialog()
         fd.setFileMode(QFileDialog.FileMode.Directory)
