@@ -22,7 +22,7 @@ class Ui_mainWindow(QMainWindow):
         mainWindow.setObjectName("mainWindow")
         mainWindow.resize(1113, 847)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("../resource/global.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        icon.addPixmap(QtGui.QPixmap("resource/global.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
         mainWindow.setWindowIcon(icon)
         self.centralwidget = QtWidgets.QWidget(parent=mainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -184,7 +184,7 @@ class Ui_mainWindow(QMainWindow):
         self.label_7.setObjectName("label_7")
         self.pushButton_6 = QtWidgets.QPushButton(parent=self.tab_1)
         self.pushButton_6.setGeometry(QtCore.QRect(500, 680, 31, 31))
-        self.pushButton_6.setIcon(QtGui.QIcon("../resource/save.png"))
+        self.pushButton_6.setIcon(QtGui.QIcon("resource/save.png"))
         self.pushButton_6.setIconSize(QtCore.QSize(25, 25))
         self.pushButton_6.setStyleSheet("border: none;")
         self.pushButton_6.setObjectName("pushButton_6")
@@ -213,7 +213,7 @@ class Ui_mainWindow(QMainWindow):
         self.label_9.setObjectName("label_9")
         self.pushButton_10 = QtWidgets.QPushButton(parent=self.tab_1)
         self.pushButton_10.setGeometry(QtCore.QRect(1030, 610, 31, 31))
-        self.pushButton_10.setIcon(QtGui.QIcon("../resource/save.png"))
+        self.pushButton_10.setIcon(QtGui.QIcon("resource/save.png"))
         self.pushButton_10.setIconSize(QtCore.QSize(25, 25))
         self.pushButton_10.setStyleSheet("border: none;")
         self.pushButton_10.setObjectName("pushButton_10")
@@ -229,7 +229,7 @@ class Ui_mainWindow(QMainWindow):
         self.label_11.setObjectName("label_11")
         self.pushButton_11 = QtWidgets.QPushButton(parent=self.tab_1)
         self.pushButton_11.setGeometry(QtCore.QRect(1030, 680, 31, 31))
-        self.pushButton_11.setIcon(QtGui.QIcon("../resource/save.png"))
+        self.pushButton_11.setIcon(QtGui.QIcon("resource/save.png"))
         self.pushButton_11.setIconSize(QtCore.QSize(25, 25))
         self.pushButton_11.setStyleSheet("border: none;")
         self.pushButton_11.setObjectName("pushButton_11")
@@ -301,7 +301,7 @@ class Ui_mainWindow(QMainWindow):
         if self.listWidget_2.count() < 2:
             QMessageBox.warning(None, "警告", "请继续添加tif数据源！")
             return
-        if self.listWidget_3.count() == 0:
+        if self.listWidget_4.count() == 0:
             QMessageBox.warning(None, "警告", "请选择目标字段并生成任务！")
             return
         if self.label_7.text() == "":
@@ -378,7 +378,7 @@ class Ui_mainWindow(QMainWindow):
                 if file not in self.listWidget_5_set:
                     if (len(self.listWidget_5_set) == 0 or
                             os.path.dirname(file) == os.path.dirname(list(self.listWidget_5_set)[0])):
-                        item = QListWidgetItem(QtGui.QIcon("../resource/model.png"), file)
+                        item = QListWidgetItem(QtGui.QIcon("resource/model.png"), file)
                         self.listWidget_5.addItem(item)
                         self.listWidget_5_set.add(file)
                     else:
@@ -405,7 +405,7 @@ class Ui_mainWindow(QMainWindow):
         self.listWidget_4.clear()
         for key, val in self.fields.items():
             if val == 1:
-                item = QListWidgetItem(QtGui.QIcon("../resource/flag.png"), key)
+                item = QListWidgetItem(QtGui.QIcon("resource/flag.png"), key)
                 self.listWidget_4.addItem(item)
 
     def checkbox_state_changed(self, state):
@@ -433,7 +433,7 @@ class Ui_mainWindow(QMainWindow):
             files = fd.selectedFiles()
             for file in files:
                 if file not in self.listWidget_2_set:
-                    item = QListWidgetItem(QtGui.QIcon("../resource/shp_ds.png"), file)
+                    item = QListWidgetItem(QtGui.QIcon("resource/tif_ds.png"), file)
                     self.listWidget_2.addItem(item)
                     self.listWidget_2_set.add(file)
             self.spinBox_3.setValue(math.ceil(math.sqrt(len(self.listWidget_2_set))))
@@ -449,7 +449,7 @@ class Ui_mainWindow(QMainWindow):
             fd.setNameFilter('shp文件(*.shp)')
             if fd.exec():
                 files = fd.selectedFiles()
-                item = QListWidgetItem(QtGui.QIcon("../resource/shp_ds.png"), files[0])
+                item = QListWidgetItem(QtGui.QIcon("resource/shp_ds.png"), files[0])
                 self.listWidget_1.addItem(item)
                 fields = getFieldsFromShp(files[0])
                 for field in fields:

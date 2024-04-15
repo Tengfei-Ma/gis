@@ -1,3 +1,4 @@
+import csv
 import os
 import math
 from datetime import datetime
@@ -194,26 +195,45 @@ def trainShp(shpPath, tifFiles, tasks, modelIndex, modelArgs, valRatio, trainTim
             for i in range(k):
                 top_model = topK_model_dict[sort_score_list[i][0]]
                 joblib.dump(top_model, os.path.join(modelPath, sort_score_list[i][0] + ".pkl"))
-                otherPath = os.path.join(modelPath, "other_top_" + str(i+1))
+                otherPath = os.path.join(modelPath, "other_top_" + str(i + 1))
                 os.makedirs(otherPath, exist_ok=True)
 
                 importances = top_model.feature_importances_
                 indices = np.argsort(importances)[::-1]
                 result_list = []
-                for i in range(sampleFeatures.shape[1]):
-                    result_list.append((feature_name[indices[i]], importances[indices[i]]))
+                for j in range(sampleFeatures.shape[1]):
+                    result_list.append((feature_name[indices[j]], importances[indices[j]]))
                 result_array = np.array(result_list)
                 data = pd.DataFrame(result_array, columns=['Environment variables', 'Relative importance'])
                 excelPath = os.path.join(otherPath, "relative_importance.xlsx")
                 with pd.ExcelWriter(excelPath) as writer:
                     data.to_excel(writer, 'importance', float_format='%.5f')
 
+                # ds = ogr.Open(shpPath)
+                # # 获取第一个图层
+                # layer = ds.GetLayer(0)
+                # # 遍历图层的要素
+                # fid_list = []
+                # for feature in layer:
+                #     # 获取要素的 FID
+                #     fid_list.append(feature.GetFID())
+                #
+                # train_id, test_id = train_test_split(
+                #     fid_list,
+                #     test_size=valRatio,
+                #     random_state=seed_dict[sort_score_list[i][0]])
+                #
+                # train_csv_file_path = os.path.join(otherPath, "train_data.csv")
+                # test_csv_file_path = os.path.join(otherPath, "test_data.csv")
+                # train_df = pd.DataFrame(train_id, columns=['fid'])
+                # train_df.to_csv(train_csv_file_path, index=False)
+                # test_df = pd.DataFrame(test_id, columns=['fid'])
+                # test_df.to_csv(test_csv_file_path, index=False)
                 gdf = gpd.read_file(shpPath)
-                train_id, test_id, train_X, test_X, train_Y, test_Y = train_test_split(gdf.index, sampleFeatures,
-                                                                                       labels,
-                                                                                       test_size=valRatio,
-                                                                                       random_state=seed_dict[
-                                                                                           sort_score_list[i][0]])
+                train_id, test_id = train_test_split(
+                    gdf.index,
+                    test_size=valRatio,
+                    random_state=seed_dict[sort_score_list[i][0]])
                 train_gdf = gdf[gdf.index.isin(train_id)]
                 test_gdf = gdf[gdf.index.isin(test_id)]
                 train_gdf.to_file(os.path.join(otherPath, "train_data.shp"))
